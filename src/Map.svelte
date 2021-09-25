@@ -34,7 +34,7 @@
 
     const simpleFillForecast = {
         type: "simple-fill",
-        color: [158, 228, 255, 0.6],  // Orange, opacity 80%
+        color: [240, 71, 255, 0.4],  // Orange, opacity 80%
         outline: {
             color: [255, 255, 255],
             width: 1
@@ -221,7 +221,7 @@
             data.routeResults.forEach(function(result) {
                 result.route.symbol = {
                     type: "simple-line",
-                    color: main ? [0, 153, 255] : [150, 150, 150],
+                    color: main ? [0, 153, 255, 0.7] : [150, 150, 150, 0.7],
                     width: 4
                 };
 
