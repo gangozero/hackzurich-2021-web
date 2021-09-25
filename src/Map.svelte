@@ -20,7 +20,7 @@
 
     esriConfig.apiKey = "AAPK3ace7928316549b28c33b66ea457e676dbsV_3c1DDacVuVpeGLLORLCTguTWMzszmAq_TwOPq10LjIj__CNgFsd1GDFUUHa";
 
-    const userPosition = [8.51631, 47.38935];
+    let userPosition = [8.51631, 47.38935];
 
 
     const simpleFillUGC = {
@@ -89,12 +89,24 @@
         return features.map(f=>[f.geometry.longitude,f.geometry.latitude]);
     }
 
+    function getPosition(){
+        return new Promise(resolve =>{
+            navigator.geolocation.getCurrentPosition(pos =>{
+                resolve([pos.coords.longitude,pos.coords.latitude]);
+            })
+        });
+    }
     
     
 
     const routeUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
   
     onMount(async ()=>{
+        if(window.location.hash == '#gps'){
+            userPosition = await getPosition();
+        }
+        
+
         const serviceDescription = await fetchServiceDescription(routeUrl);
         const { supportedTravelModes } = serviceDescription;
         const travelMode = supportedTravelModes.find((mode) => mode.name === "Walking Time");
