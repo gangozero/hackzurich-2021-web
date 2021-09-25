@@ -32,14 +32,6 @@
                 }
             };
     
-    const simpleFillShelters = {
-        type: "simple-fill",
-        color: [255, 0, 0, 0.8],  // Red, opacity 80%
-        outline: {
-            color: [255, 255, 255],
-            width: 1
-        }
-    };
 
     const map = new Map({
         basemap: "arcgis-navigation" //Basemap layer service
@@ -53,7 +45,7 @@
 
     const flUGC = new FeatureLayer({
         portalItem: {
-          id: "81d73c02a70d4aae83fc7c3ba0f073a7"
+          id: "bccc1003a4f44fa2ba488697efb73564"
         },
         renderer: {
             type: "simple",
@@ -112,7 +104,8 @@
         const travelMode = supportedTravelModes.find((mode) => mode.name === "Walking Time");
 
         const barriers = await flBarrier.queryFeatures();
-        const shelters = await getSheltersCoords();
+        const UGCs = await flUGC.queryFeatures();
+        const sheltersCoords = await getSheltersCoords();
 
         loading=false;
 
@@ -149,7 +142,7 @@
             const rings = [[x1,y1],[x2,y1],[x2,y2],[x1,y2],[x1,y1]];
 
             const result = await addFeatures({
-                url: 'https://services8.arcgis.com/VAHmVwXyn8lMPYKG/arcgis/rest/services/flood_ugc/FeatureServer/0',
+                url: 'https://services8.arcgis.com/VAHmVwXyn8lMPYKG/arcgis/rest/services/flood_ugc2/FeatureServer/0',
                 features: [{
                     attributes: {
                         type: 'UGC_FLOOD'
@@ -198,7 +191,9 @@
                         })
                     ]
                 }),
-                polygonBarriers: barriers,
+                polygonBarriers: new FeatureSet({
+                    features: [...barriers.features, ...UGCs.features]
+                }),
                 travelMode
             });
             const data = await solve(routeUrl, routeParams);
@@ -216,7 +211,7 @@
         }
 
         async function getRoutesToShelters(from){
-            const closest = shelters.sort((crd1,crd2) =>{
+            const closest = sheltersCoords.sort((crd1,crd2) =>{
                 return Math.hypot(crd1[0]-from[0],crd1[1]-from[1])-Math.hypot(crd2[0]-from[0],crd2[1]-from[1]);
             })
 
