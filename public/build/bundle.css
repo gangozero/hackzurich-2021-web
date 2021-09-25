@@ -1,4 +1,8 @@
 @import "https://js.arcgis.com/4.21/@arcgis/core/assets/esri/themes/dark/main.css";
 
 /* fakecss:/data/Projects/test/Hackzurich/hackzurich-2021-web/src/Map.esbuild-svelte-fake-css */
+div.svelte-1f050rm {
+  height: 100%;
+  width: 100%;
+}
 /*# sourceMappingURL=bundle.css.map */
