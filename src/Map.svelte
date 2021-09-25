@@ -122,13 +122,29 @@
             center: userPosition, //Longitude, latitude
             zoom: 14
         });
+          
+        let pointGraphic = new Graphic({
+            geometry: {
+                type: "point", 
+                longitude: userPosition[0],
+                latitude: userPosition[1]
+            },
+            symbol: {
+                type: "simple-marker",  
+                color: [226, 119, 40]
+            }
+        });
 
-        view.on("hold",async (event) => {
+        view.graphics.add(pointGraphic)
+
+        
+
+        view.on("click",async (event) => {
 
             const y1 = event.mapPoint.latitude-0.00005;
             const y2 = event.mapPoint.latitude+0.00005;
-            const x1 = event.mapPoint.longitude-0.00005;
-            const x2 = event.mapPoint.longitude+0.00005;
+            const x1 = event.mapPoint.longitude-0.000075;
+            const x2 = event.mapPoint.longitude+0.000075;
 
             const rings = [[x1,y1],[x2,y1],[x2,y2],[x1,y2],[x1,y1]];
 
@@ -136,7 +152,7 @@
                 url: 'https://services8.arcgis.com/VAHmVwXyn8lMPYKG/arcgis/rest/services/flood_ugc/FeatureServer/0',
                 features: [{
                     attributes: {
-                        type: 'local flood'
+                        type: 'UGC_FLOOD'
                     },
                     geometry: {
                         "rings": [rings],
@@ -164,7 +180,7 @@
         })
 
         async function getRoute(from,to,main) {
-            console.log(barriers);
+          
             const routeParams = new RouteParameters({
                 stops: new FeatureSet({
                     features: [
