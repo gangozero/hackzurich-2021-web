@@ -21,7 +21,7 @@
     esriConfig.apiKey = "AAPK3ace7928316549b28c33b66ea457e676dbsV_3c1DDacVuVpeGLLORLCTguTWMzszmAq_TwOPq10LjIj__CNgFsd1GDFUUHa";
 
     let userPosition = [8.51631, 47.38935];
-
+    let loading = true;
 
     const simpleFillUGC = {
                 type: "simple-fill",
@@ -113,6 +113,8 @@
 
         const barriers = await flBarrier.queryFeatures();
         const shelters = await getSheltersCoords();
+
+        loading=false;
 
         const view = new MapView({
             container: "viewDiv",
@@ -212,12 +214,53 @@
     });
 </script>
 
+{#if loading}
+<div class="loader">Loading...</div>
+{/if}
 <div id="viewDiv"></div>
+
+
 
 <style>
     @import "https://js.arcgis.com/4.21/@arcgis/core/assets/esri/themes/dark/main.css";
-    div{
+    #viewDiv{
         height:100%;
         width: 100%;
     }
+
+    .loader,
+    .loader:after {
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
+    }
+    .loader {
+    position:absolute;
+    top: 50%;
+    margin: 60px auto;
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 1.1em solid rgba(1, 144, 125, 0.2);
+    border-right: 1.1em solid rgba(1, 144, 125, 0.2);
+    border-bottom: 1.1em solid rgba(1, 144, 125, 0.2);
+    border-left: 1.1em solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+    }
+
+    @keyframes load8 {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+    }
+
 </style>
