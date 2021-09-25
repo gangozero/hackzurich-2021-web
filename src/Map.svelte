@@ -20,6 +20,9 @@
 
     esriConfig.apiKey = "AAPK3ace7928316549b28c33b66ea457e676dbsV_3c1DDacVuVpeGLLORLCTguTWMzszmAq_TwOPq10LjIj__CNgFsd1GDFUUHa";
 
+    const userPosition = [8.51631, 47.38935];
+
+
     const simpleFillUGC = {
                 type: "simple-fill",
                 color: [227, 139, 79, 0.8],  // Orange, opacity 80%
@@ -28,6 +31,15 @@
                     width: 1
                 }
             };
+    
+    const simpleFillShelters = {
+        type: "simple-fill",
+        color: [255, 0, 0, 0.8],  // Red, opacity 80%
+        outline: {
+            color: [255, 255, 255],
+            width: 1
+        }
+    };
 
     const map = new Map({
         basemap: "arcgis-navigation" //Basemap layer service
@@ -49,26 +61,51 @@
         }
     });
 
+    const flShelters = new FeatureLayer({
+        portalItem: { 
+          id: "f0f922a956b046ae88fadc8b32e1fb7f"
+        },
+        renderer: {
+            type: "simple",
+            "symbol": {
+                "type": "picture-marker",
+                "url": "http://static.arcgis.com/images/Symbols/NPS/npsPictograph_0231b.png",
+                "width": "18px",
+                "height": "18px"
+            }
+        }
+    });
+
     const graphicsLayer = new GraphicsLayer();
     
     map.add(graphicsLayer);
     map.add(flBarrier); 
     map.add(flUGC); 
+    map.add(flShelters); 
+
+
+    async function getSheltersCoords(){
+        const {features} = await flShelters.queryFeatures();
+        return features.map(f=>[f.geometry.longitude,f.geometry.latitude]);
+    }
+
+    
+    
 
     const routeUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
-
-
+  
     onMount(async ()=>{
         const serviceDescription = await fetchServiceDescription(routeUrl);
         const { supportedTravelModes } = serviceDescription;
         const travelMode = supportedTravelModes.find((mode) => mode.name === "Walking Time");
 
         const barriers = await flBarrier.queryFeatures();
+        const shelters = await getSheltersCoords();
 
         const view = new MapView({
             container: "viewDiv",
             map: map,
-            center: [8.51631, 47.38935], //Longitude, latitude
+            center: userPosition, //Longitude, latitude
             zoom: 14
         });
 
@@ -110,40 +147,26 @@
             });
 
             graphicsLayer.add(polygonGraphic);
-
-            console.log(rings)
-
         })
 
-        view.on("click", function(event) {
-            if (view.graphics.length === 0) {
-                addGraphic("origin", event.mapPoint);
-            } else if (view.graphics.length === 1) {
-                addGraphic("destination", event.mapPoint);
-                getRoute(); // Call the route service
-            } else {
-                view.graphics.removeAll();
-                addGraphic("origin", event.mapPoint);
-            }
-        });
-
-        function addGraphic(type, point) {
-            const graphic = new Graphic({
-            symbol: {
-                type: "simple-marker",
-                color: (type === "origin") ? "white" : "black",
-                size: "8px"
-            },
-            geometry: point
-            });
-            view.graphics.add(graphic);
-        }
-
-        async function getRoute() {
+        async function getRoute(from,to,width) {
             console.log(barriers);
             const routeParams = new RouteParameters({
                 stops: new FeatureSet({
-                    features: view.graphics.toArray()
+                    features: [
+                        new Graphic({
+                        geometry: new Point({
+                            latitude: from[1],
+                            longitude: from[0]
+                        })
+                        }),
+                        new Graphic({
+                        geometry: new Point({
+                            latitude: to[1],
+                            longitude: to[0]
+                        })
+                        })
+                    ]
                 }),
                 polygonBarriers: barriers,
                 travelMode
@@ -154,13 +177,26 @@
                 result.route.symbol = {
                     type: "simple-line",
                     color: [5, 150, 255],
-                    width: 3
+                    width: width || 3
                 };
 
                 view.graphics.add(result.route);
             });
                 
         }
+
+        async function getRoutesToShelters(from){
+            const closest = shelters.sort((crd1,crd2) =>{
+                return Math.hypot(crd1[0]-from[0],crd1[1]-from[1])-Math.hypot(crd2[0]-from[0],crd2[1]-from[1]);
+            })
+
+            getRoute(from, closest[0], 4);
+            getRoute(from, closest[1], 3);
+            getRoute(from, closest[2], 2);
+        }
+
+
+        getRoutesToShelters(userPosition);
     });
 </script>
 
