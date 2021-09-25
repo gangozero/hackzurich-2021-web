@@ -24,13 +24,22 @@
     let loading = true;
 
     const simpleFillUGC = {
-                type: "simple-fill",
-                color: [227, 139, 79, 0.8],  // Orange, opacity 80%
-                outline: {
-                    color: [255, 255, 255],
-                    width: 1
-                }
-            };
+        type: "simple-fill",
+        color: [227, 139, 79, 0.8],  // Orange, opacity 80%
+        outline: {
+            color: [255, 255, 255],
+            width: 1
+        }
+    };
+
+    const simpleFillForecast = {
+        type: "simple-fill",
+        color: [158, 228, 255, 0.6],  // Orange, opacity 80%
+        outline: {
+            color: [255, 255, 255],
+            width: 1
+        }
+    };
     
 
     const map = new Map({
@@ -53,6 +62,16 @@
         }
     });
 
+    const flForecast = new FeatureLayer({
+        portalItem: {
+          id: "6a4e5e0f15984191826b982a737c2e9c"
+        },
+        renderer: {
+            type: "simple",
+            symbol: simpleFillForecast
+        }
+    });
+
     const flShelters = new FeatureLayer({
         portalItem: { 
           id: "f0f922a956b046ae88fadc8b32e1fb7f"
@@ -71,6 +90,7 @@
     const graphicsLayer = new GraphicsLayer();
     
     map.add(graphicsLayer);
+    map.add(flForecast); 
     map.add(flBarrier); 
     map.add(flUGC); 
     map.add(flShelters); 
