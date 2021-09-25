@@ -10,6 +10,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@arcgis/core": "^4.21.1",
     "derver": "^0.4.19",
     "esbuild": "^0.13.2",
     "esbuild-svelte": "^0.5.6",
