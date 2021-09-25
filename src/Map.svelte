@@ -163,7 +163,7 @@
             graphicsLayer.add(polygonGraphic);
         })
 
-        async function getRoute(from,to,width) {
+        async function getRoute(from,to,main) {
             console.log(barriers);
             const routeParams = new RouteParameters({
                 stops: new FeatureSet({
@@ -190,8 +190,8 @@
             data.routeResults.forEach(function(result) {
                 result.route.symbol = {
                     type: "simple-line",
-                    color: [5, 150, 255],
-                    width: width || 3
+                    color: main ? [0, 153, 255] : [150, 150, 150],
+                    width: 4
                 };
 
                 view.graphics.add(result.route);
@@ -204,9 +204,9 @@
                 return Math.hypot(crd1[0]-from[0],crd1[1]-from[1])-Math.hypot(crd2[0]-from[0],crd2[1]-from[1]);
             })
 
-            getRoute(from, closest[0], 4);
-            getRoute(from, closest[1], 3);
-            getRoute(from, closest[2], 2);
+            await getRoute(from, closest[2], false);
+            await getRoute(from, closest[1], false);
+            getRoute(from, closest[0], true);
         }
 
 
@@ -226,6 +226,7 @@
     #viewDiv{
         height:100%;
         width: 100%;
+        user-select: none;
     }
 
     .loader,
@@ -250,7 +251,8 @@
     transform: translateZ(0);
     -webkit-animation: load8 1.1s infinite linear;
     animation: load8 1.1s infinite linear;
-    }
+       }
+    
 
     @keyframes load8 {
     0% {

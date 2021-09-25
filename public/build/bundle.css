@@ -1,17 +1,18 @@
 @import "https://js.arcgis.com/4.21/@arcgis/core/assets/esri/themes/dark/main.css";
 
 /* fakecss:/data/Projects/test/Hackzurich/hackzurich-2021-web/src/Map.esbuild-svelte-fake-css */
-#viewDiv.svelte-ga0n8f {
+#viewDiv.svelte-q78tlq {
   height: 100%;
   width: 100%;
+  user-select: none;
 }
-.loader.svelte-ga0n8f,
-.loader.svelte-ga0n8f:after {
+.loader.svelte-q78tlq,
+.loader.svelte-q78tlq:after {
   border-radius: 50%;
   width: 10em;
   height: 10em;
 }
-.loader.svelte-ga0n8f {
+.loader.svelte-q78tlq {
   position: absolute;
   top: 50%;
   margin: 60px auto;
@@ -25,10 +26,10 @@
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);
-  -webkit-animation: svelte-ga0n8f-load8 1.1s infinite linear;
-  animation: svelte-ga0n8f-load8 1.1s infinite linear;
+  -webkit-animation: svelte-q78tlq-load8 1.1s infinite linear;
+  animation: svelte-q78tlq-load8 1.1s infinite linear;
 }
-@keyframes svelte-ga0n8f-load8 {
+@keyframes svelte-q78tlq-load8 {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
